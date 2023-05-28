@@ -2,6 +2,7 @@ import streamlit as st
 import pickle
 import pandas as pd
 import re
+from streamlit_player import st_player
 
 # CSS to inject contained in a string
 hide_table_row_index = """
@@ -72,8 +73,12 @@ for cat_i, tab in enumerate(tabs):
 
                     with st.expander(recipe_name):
                         for key, df_table in category_recipe_dict[cat][i].items():
-                            if key not in  ["recipe_name","image_url"]:
+                            if key not in  ["recipe_name","image_url","video_url"]:
                                 st.table(df_table)
+
+                        video_url = category_recipe_dict[cat][i]["video_url"]
+                        if video_url:
+                            st_player(video_url, key = f"{cat}-{i}-video")
 
 
 
