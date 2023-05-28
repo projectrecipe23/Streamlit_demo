@@ -210,34 +210,10 @@ with sidebar:
         with col2:
             st.button("💌")
 
-exit()
-# Define the content for each tab
-with tabs[0]:
-
-    # Expander content
-    for i in range(5):
-        with st.container():
-            col1, col2 = st.columns([1,5])
-            
-            with col1:
-                st.image(
-                    "https://restaurant.eatsmart.gov.hk/b5/images/recipes/%E5%92%8C%E9%A2%A8%E9%87%8E%E8%8F%8C%E7%82%92%E6%84%8F.jpg",
-                    use_column_width = "auto"
-                )
-                st.number_input("几人份", min_value=0, max_value=9, value=5,key=i, label_visibility ="collapsed")
-            with col2:
-                recipe_name = category_recipe_dict['0'][i]["recipe_name"]
-
-                with st.expander(recipe_name):
-                    for key, df_table in category_recipe_dict['0'][i].items():
-                        if key != "recipe_name":
-                            st.table(df_table)
-
-
-with tabs[1]:
-    st.header("Tab 2")
-    st.write("This is the content of Tab 2")
-
-with tabs[2]:
-    st.header("Tab 3")
-    st.write("This is the content of Tab 3")
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
