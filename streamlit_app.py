@@ -1,0 +1,238 @@
+import streamlit as st
+import pickle
+import pandas as pd
+import re
+
+# CSS to inject contained in a string
+hide_table_row_index = """
+            <style>
+            thead tr th:first-child {display:none}
+            tbody th {display:none}
+            </style>
+            """
+st.markdown(hide_table_row_index, unsafe_allow_html=True)
+
+change_text = """
+<style>
+div.st-cs.st-c5.st-bc.st-ct.st-cu {visibility: hidden;}
+div.st-cs.st-c5.st-bc.st-ct.st-cu:before {content: "Wähle eine Option"; visibility: visible;}
+</style>
+"""
+st.markdown(change_text, unsafe_allow_html=True)
+
+# Save into pickle
+with open('category_recipe_dict.pickle', 'rb') as handle:
+    category_recipe_dict = pickle.load(handle)
+
+st.header("帮你规划一餐")
+
+### User Input Section
+col1, col2 = st.columns([1,2])
+
+with col1:
+    N_people = st.number_input("几人吃饭", min_value=1, max_value=9, value=1)
+
+with col2:
+    tmp_list = ["猪肉","狗肉","花生"]
+    choice = st.multiselect("避开:",tmp_list, default=["花生"])
+
+###
+
+
+cat_index = ["-1", "0", "1", "2", "3", "4", "5", "6", "7"]
+cat_name = ['所有食譜', '蔬果', '海產', '肉類', '家禽', '小吃', '湯品', '鐵質豐富', '其他']
+cat_name_dict = dict(zip(cat_index,cat_name))
+
+# Create all tabs
+tabs = st.tabs(cat_name)
+tab_number_dict = dict()
+
+for cat_i, tab in enumerate(tabs):
+    
+    cat = cat_index[cat_i]
+    tab_number_dict[cat] = dict()
+
+    with tab:
+        
+
+        for i in range(5):
+
+            with st.container():
+                col1, col2 = st.columns([1,5])
+
+                with col1:
+                    st.image(
+                        category_recipe_dict[cat][i]["image_url"],
+                        use_column_width = "auto"
+                    )
+                    tab_number_dict[cat][i] = st.number_input("几人份", min_value=0, max_value=9, value=0,key=f"{cat}-{i}", label_visibility ="collapsed")
+
+                with col2:
+                    recipe_name = category_recipe_dict[cat][i]["recipe_name"]
+
+                    with st.expander(recipe_name):
+                        for key, df_table in category_recipe_dict[cat][i].items():
+                            if key not in  ["recipe_name","image_url"]:
+                                st.table(df_table)
+
+
+
+def extract_integer(string):
+    try:
+        integer = re.findall(r'\d+', string)[0]
+        integer = int(integer) 
+    except:
+        integer = int(string) 
+
+    return integer
+
+def remove_bracket(text):
+
+    text = text.split("（")[0]
+    text = text.split("(")[0]
+    
+    return text
+
+def update_health_summary(df_table, recipe_number):
+
+    for index, row in df_table.iterrows():
+        item = row["每一份"]
+        value = row[""]
+
+        if item in health_summary:
+            health_summary[item] += extract_integer(value) * recipe_number
+        else:
+            health_summary[item] = extract_integer(value) * recipe_number
+
+def update_ingredients_summary(df_table, recipe_number):
+
+    for index, row in df_table.iterrows():
+
+        item = remove_bracket(row["材料"]) + "(克)"
+        value = row[""]
+
+        if item in ingredients_summary:
+            ingredients_summary[item] += extract_integer(value) * recipe_number
+        else:
+            ingredients_summary[item] =extract_integer(value) * recipe_number
+
+
+ingredients_summary = dict()
+health_summary = dict()
+selected_recipe = dict()
+
+sidebar = st.sidebar
+
+for cat_i, recipe_list in tab_number_dict.items():
+    for recipe_i, recipe_number in recipe_list.items():
+        if recipe_number:
+            
+            try:
+                recipe_name = category_recipe_dict[cat_i][recipe_i]["recipe_name"]
+                selected_recipe[recipe_name] = int(recipe_number)
+            
+                health_table = category_recipe_dict[cat_i][recipe_i]["每一份"]
+                update_health_summary(health_table, recipe_number)
+
+                ingredient_table = category_recipe_dict[cat_i][recipe_i]["材料"]
+                update_ingredients_summary(ingredient_table, recipe_number)
+
+            except:
+                pass
+
+
+def percentage_to_text(val):
+
+    lower = 0.7
+    upper = 1.3
+
+    if val<= upper and val >= lower:
+        return "(适中)"
+    elif val < lower:
+        return "(低于推荐)"
+    elif val > upper:
+        return "(过量)"
+
+# Define a function to apply style to a column
+def style_column(val):
+
+    if "适中" in val:
+        return "color: green"
+    elif "低于推荐" in val:
+        return "color: blue"
+    elif "过量" in val:
+        return "color: red"
+
+
+with sidebar:
+
+    if selected_recipe:
+        with st.expander("食谱", expanded=True):
+            st.table(pd.DataFrame(selected_recipe.items(), columns=['食谱', '份']))
+
+    if ingredients_summary:
+        with st.expander("材料", expanded=True):
+            st.table(pd.DataFrame(ingredients_summary.items(), columns=['材料', '分量']))
+
+    if health_summary:
+        with st.expander("营养", expanded=True): 
+            df_table = pd.DataFrame(health_summary.items(), columns=['营养', ''])
+            
+            df_table["guide"] = [2000, 300, 50, 90, 33, 6000]
+            df_table["guide"] *= N_people
+            df_table["guide"] *= 0.4 
+            
+            df_table["percentage"] = (df_table[""] / df_table["guide"])
+            df_table["text"] = df_table["percentage"].apply(percentage_to_text)
+            df_table[""] = df_table[""].astype(str) + df_table["text"]
+
+
+            df_table = df_table[["营养",""]].copy()
+            styled_df = df_table.style.applymap(style_column, subset=[""])
+            st.table(styled_df)
+
+
+    if ingredients_summary or health_summary:
+        st.write("发送至我的Whatsapp")
+        col1, col2 = st.columns([6,1])
+        with col1:
+            st.text_input(
+            "Placeholder for the other text input widget",
+            "+6969 669 6969",
+            key="placeholder",
+            label_visibility ="collapsed"
+            )
+        with col2:
+            st.button("💌")
+
+exit()
+# Define the content for each tab
+with tabs[0]:
+
+    # Expander content
+    for i in range(5):
+        with st.container():
+            col1, col2 = st.columns([1,5])
+            
+            with col1:
+                st.image(
+                    "https://restaurant.eatsmart.gov.hk/b5/images/recipes/%E5%92%8C%E9%A2%A8%E9%87%8E%E8%8F%8C%E7%82%92%E6%84%8F.jpg",
+                    use_column_width = "auto"
+                )
+                st.number_input("几人份", min_value=0, max_value=9, value=5,key=i, label_visibility ="collapsed")
+            with col2:
+                recipe_name = category_recipe_dict['0'][i]["recipe_name"]
+
+                with st.expander(recipe_name):
+                    for key, df_table in category_recipe_dict['0'][i].items():
+                        if key != "recipe_name":
+                            st.table(df_table)
+
+
+with tabs[1]:
+    st.header("Tab 2")
+    st.write("This is the content of Tab 2")
+
+with tabs[2]:
+    st.header("Tab 3")
+    st.write("This is the content of Tab 3")
