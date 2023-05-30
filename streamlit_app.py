@@ -23,9 +23,8 @@ with open('category_recipe_dict.pickle', 'rb') as handle:
     category_recipe_dict = pickle.load(handle)
 
 
-
-selected2 = option_menu("幫你規劃你的", ["早餐", "午餐", "晚餐"], 
-icons=[None,None,None], default_index=0, orientation="horizontal")
+selected2 = option_menu("幫你規劃你的", ["早餐", "午餐", "晚餐"], menu_icon= "🍳",
+icons=["🌅","🌞","🌙"], default_index=0, orientation="horizontal")
 
 ### User Input Section
 col1, col2 = st.columns([1,2])
