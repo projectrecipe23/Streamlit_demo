@@ -22,20 +22,15 @@ st.markdown(hide_table_row_index, unsafe_allow_html=True)
 with open('category_recipe_dict.pickle', 'rb') as handle:
     category_recipe_dict = pickle.load(handle)
 
-selected2 = option_menu("幫你規劃你的", ["早餐", "午餐", "晚餐"], 
-    icons=['house', 'cloud-upload', "list-task"], 
-    menu_icon="cast", default_index=0, orientation="horizontal")
 
-col1, col2, col3, col4 = st.columns([2,1,1,1])
+
+col1, col2= st.columns([1,1])
 
 with col1:
     st.header("幫你規劃你的")
 with col2:
-    st.button("早餐")
-with col3:
-    st.button("午餐")
-with col4:
-    st.button("晚餐")
+    selected2 = option_menu(None, ["早餐", "午餐", "晚餐"], 
+    icons=['house', 'cloud-upload', "list-task"], default_index=0, orientation="horizontal")
 
 ### User Input Section
 col1, col2 = st.columns([1,2])
