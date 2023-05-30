@@ -21,7 +21,16 @@ st.markdown(hide_table_row_index, unsafe_allow_html=True)
 with open('category_recipe_dict.pickle', 'rb') as handle:
     category_recipe_dict = pickle.load(handle)
 
-st.header("幫你規劃你的一餐")
+col1, col2, col3, col4 = st.columns([6,1,1,1])
+
+with col1:
+    st.header("幫你規劃你的")
+with col2:
+    st.button("早餐")
+with col3:
+    st.button("午餐")
+with col4:
+    st.button("晚餐")
 
 ### User Input Section
 col1, col2 = st.columns([1,2])
