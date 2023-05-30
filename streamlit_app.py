@@ -24,13 +24,7 @@ with open('category_recipe_dict.pickle', 'rb') as handle:
 
 
 
-col1, col2= st.columns([1,1])
-
-with col1:
-    st.header("幫你規劃你的")
-with col2:
-    selected2 = option_menu(None, ["早餐", "午餐", "晚餐"], 
-    icons=['house', 'cloud-upload', "list-task"], default_index=0, orientation="horizontal")
+selected2 = option_menu(None, ["幫你規劃你的","早餐", "午餐", "晚餐"], default_index=0, orientation="horizontal")
 
 ### User Input Section
 col1, col2 = st.columns([1,2])
