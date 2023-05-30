@@ -1,1 +1,2 @@
 streamlit-player==0.1.5
+streamlit_option_menu==0.3.5
