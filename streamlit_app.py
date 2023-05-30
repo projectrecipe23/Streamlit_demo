@@ -147,8 +147,8 @@ for cat_i, recipe_list in tab_number_dict.items():
 
 def percentage_to_text(val):
 
-    lower = 0.7
-    upper = 1.3
+    lower = 0.3
+    upper = 1.7
 
     if val<= upper and val >= lower:
         return "(適中)"
