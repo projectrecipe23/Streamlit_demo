@@ -22,8 +22,9 @@ st.markdown(hide_table_row_index, unsafe_allow_html=True)
 with open('category_recipe_dict.pickle', 'rb') as handle:
     category_recipe_dict = pickle.load(handle)
 
-selected = option_menu("Main Menu", ["Home", 'Settings'], 
-        icons=['house', 'gear'], menu_icon="cast", default_index=1)
+selected2 = option_menu(None, ["Home", "Upload", "Tasks", 'Settings'], 
+    icons=['house', 'cloud-upload', "list-task", 'gear'], 
+    menu_icon="cast", default_index=0, orientation="horizontal")
 
 col1, col2, col3, col4 = st.columns([2,1,1,1])
 
