@@ -202,7 +202,7 @@ with sidebar:
         with col1:
             st.text_input(
             "Placeholder for the other text input widget",
-            "+6969 669 6969",
+            "+852 XXXX XXXX",
             key="placeholder",
             label_visibility ="collapsed"
             )
