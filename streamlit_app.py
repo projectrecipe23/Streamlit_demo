@@ -3,6 +3,7 @@ import pickle
 import pandas as pd
 import re
 from streamlit_player import st_player
+from streamlit_option_menu import option_menu
 
 st.set_page_config(
     page_title="OnlyRice------------------------------------",
@@ -20,6 +21,9 @@ st.markdown(hide_table_row_index, unsafe_allow_html=True)
 # Save into pickle
 with open('category_recipe_dict.pickle', 'rb') as handle:
     category_recipe_dict = pickle.load(handle)
+
+selected = option_menu("Main Menu", ["Home", 'Settings'], 
+        icons=['house', 'gear'], menu_icon="cast", default_index=1)
 
 col1, col2, col3, col4 = st.columns([2,1,1,1])
 
