@@ -21,7 +21,7 @@ st.markdown(hide_table_row_index, unsafe_allow_html=True)
 with open('category_recipe_dict.pickle', 'rb') as handle:
     category_recipe_dict = pickle.load(handle)
 
-col1, col2, col3, col4 = st.columns([6,1,1,1])
+col1, col2, col3, col4 = st.columns([2,1,1,1])
 
 with col1:
     st.header("幫你規劃你的")
