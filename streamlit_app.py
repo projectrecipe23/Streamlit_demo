@@ -5,7 +5,7 @@ import re
 from streamlit_player import st_player
 
 st.set_page_config(
-    page_title="OnlyRice                                 x",
+    page_title="OnlyRice",
     page_icon="🍲")
 
 # CSS to inject contained in a string
@@ -17,29 +17,21 @@ hide_table_row_index = """
             """
 st.markdown(hide_table_row_index, unsafe_allow_html=True)
 
-change_text = """
-<style>
-div.st-cs.st-c5.st-bc.st-ct.st-cu {visibility: hidden;}
-div.st-cs.st-c5.st-bc.st-ct.st-cu:before {content: "Wähle eine Option"; visibility: visible;}
-</style>
-"""
-st.markdown(change_text, unsafe_allow_html=True)
-
 # Save into pickle
 with open('category_recipe_dict.pickle', 'rb') as handle:
     category_recipe_dict = pickle.load(handle)
 
-st.header("帮你规划一餐")
+st.header("幫你規劃你的一餐")
 
 ### User Input Section
 col1, col2 = st.columns([1,2])
 
 with col1:
-    N_people = st.number_input("几人吃饭", min_value=1, max_value=9, value=1)
+    N_people = st.number_input("幾人吃飯", min_value=1, max_value=9, value=1)
 
 with col2:
-    tmp_list = ["猪肉","狗肉","花生"]
-    choice = st.multiselect("避开:",tmp_list, default=["花生"])
+    tmp_list = ["豬肉","花生"]
+    choice = st.multiselect("避開:",tmp_list, default=["花生"])
 
 ###
 
@@ -70,7 +62,7 @@ for cat_i, tab in enumerate(tabs):
                         category_recipe_dict[cat][i]["image_url"],
                         use_column_width = "auto"
                     )
-                    tab_number_dict[cat][i] = st.number_input("几人份", min_value=0, max_value=9, value=0,key=f"{cat}-{i}", label_visibility ="collapsed")
+                    tab_number_dict[cat][i] = st.number_input("幾人份", min_value=0, max_value=9, value=0,key=f"{cat}-{i}", label_visibility ="collapsed")
 
                 with col2:
                     recipe_name = category_recipe_dict[cat][i]["recipe_name"]
@@ -156,20 +148,20 @@ def percentage_to_text(val):
     upper = 1.3
 
     if val<= upper and val >= lower:
-        return "(适中)"
+        return "(適中)"
     elif val < lower:
-        return "(低于推荐)"
+        return "(低於推薦)"
     elif val > upper:
-        return "(过量)"
+        return "(過量)"
 
 # Define a function to apply style to a column
 def style_column(val):
 
-    if "适中" in val:
+    if "適中" in val:
         return "color: green"
-    elif "低于推荐" in val:
+    elif "低於推薦" in val:
         return "color: blue"
-    elif "过量" in val:
+    elif "過量" in val:
         return "color: red"
 
 
@@ -202,7 +194,7 @@ with sidebar:
 
 
     if ingredients_summary or health_summary:
-        st.write("发送至我的Whatsapp")
+        st.write("發送至我的Whatsapp")
         col1, col2 = st.columns([6,1])
         with col1:
             st.text_input(
