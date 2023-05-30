@@ -5,7 +5,7 @@ import re
 from streamlit_player import st_player
 
 st.set_page_config(
-    page_title="OnlyRice",
+    page_title="OnlyRice------------------------------------",
     page_icon="🍲")
 
 # CSS to inject contained in a string
